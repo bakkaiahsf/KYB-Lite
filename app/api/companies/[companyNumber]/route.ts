@@ -423,15 +423,25 @@ export async function GET(
     // Determine search strategy
     if (queryParams.refresh || queryParams.source === 'companies_house') {
       // Force fetch from Companies House
-      result = await getCompaniesHouseCompany(
+      const chResult = await getCompaniesHouseCompany(
         supabase, 
         companyNumber, 
         queryParams.includeOfficers, 
         queryParams.includePSCs
       );
+      result = {
+        company: chResult.company,
+        executionTime: chResult.executionTime,
+        source: chResult.source || 'companies_house' as const
+      };
     } else if (queryParams.source === 'local') {
       // Only search local database
-      result = await getLocalCompany(supabase, companyNumber);
+      const localResult = await getLocalCompany(supabase, companyNumber);
+      result = {
+        company: localResult.company,
+        executionTime: localResult.executionTime,
+        source: localResult.source || 'local' as const
+      };
     } else {
       // Default: try local first, then Companies House if not found or stale
       const localResult = await getLocalCompany(supabase, companyNumber);
@@ -442,7 +452,11 @@ export async function GET(
         const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
         
         if (lastSynced > dayAgo) {
-          result = localResult;
+          result = {
+            company: localResult.company,
+            executionTime: localResult.executionTime,
+            source: 'local' as const
+          };
         } else {
           // Data is stale, refresh from Companies House
           const chResult = await getCompaniesHouseCompany(
@@ -451,16 +465,25 @@ export async function GET(
             queryParams.includeOfficers, 
             queryParams.includePSCs
           );
-          result = chResult.company ? chResult : localResult;
+          result = {
+            company: chResult.company || localResult.company,
+            executionTime: chResult.executionTime,
+            source: chResult.company ? 'companies_house' as const : 'local' as const
+          };
         }
       } else {
         // Not found locally, try Companies House
-        result = await getCompaniesHouseCompany(
+        const chResult = await getCompaniesHouseCompany(
           supabase, 
           companyNumber, 
           queryParams.includeOfficers, 
           queryParams.includePSCs
         );
+        result = {
+          company: chResult.company,
+          executionTime: chResult.executionTime,
+          source: chResult.source || 'companies_house' as const
+        };
       }
     }
 
