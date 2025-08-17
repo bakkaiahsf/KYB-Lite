@@ -11,6 +11,8 @@ export default async function Navbar() {
       const supabase = createClient();
       const { data } = await supabase.auth.getUser();
       user = data.user;
+    } else {
+      console.info('Navbar: Supabase environment variables not configured - running without authentication');
     }
   } catch (error) {
     // Gracefully handle auth errors - continue without user
