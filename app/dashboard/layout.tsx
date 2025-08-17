@@ -1,49 +1,26 @@
-import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Dashboard - Nexus AI',
+  title: 'Dashboard - KYB Lite',
   description: 'Company intelligence dashboard for due diligence and risk analysis',
 };
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = createClient();
-  
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    redirect('/signin');
-  }
-
-  // Get user subscription information
-  const { data: subscription } = await supabase
-    .from('subscriptions')
-    .select('*')
-    .eq('user_id', user.id)
-    .single();
-
-  const subscriptionTier = subscription?.status === 'active' 
-    ? subscription.price_id?.includes('pro') ? 'pro'
-    : subscription.price_id?.includes('enterprise') ? 'enterprise' 
-    : subscription.price_id?.includes('basic') ? 'basic'
-    : 'free'
-    : 'free';
+  // No authentication required - public access
+  const mockUser = null;
+  const subscriptionTier = 'demo';
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-900">
       <div className="flex">
         {/* Sidebar */}
         <DashboardSidebar 
-          user={user} 
+          user={mockUser} 
           subscriptionTier={subscriptionTier}
         />
         
