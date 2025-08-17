@@ -10,6 +10,9 @@ export const createClient = () => {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   
   if (!supabaseUrl || !supabaseAnonKey) {
+    // In development or when env vars are missing, create a mock client
+    // This prevents the app from crashing and allows graceful degradation
+    console.warn('Missing Supabase environment variables. Authentication will be disabled.');
     throw new Error('Missing Supabase environment variables. Please configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Vercel dashboard.');
   }
 
