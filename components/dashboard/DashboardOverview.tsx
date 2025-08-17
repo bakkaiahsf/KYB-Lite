@@ -8,20 +8,23 @@ import {
   BookmarkIcon,
   ChartBarIcon 
 } from '@heroicons/react/24/outline';
+import { getSubscriptionTier, getRemainingSearches } from '@/lib/config/subscription';
+
+interface SearchQuery {
+  id: string;
+  query: string;
+  created_at: string;
+  user_id: string;
+  results_count?: number;
+}
 
 interface DashboardOverviewProps {
   user: User;
   subscriptionTier: string;
   todaySearches: number;
-  recentSearches: any[];
+  recentSearches: SearchQuery[];
 }
 
-const subscriptionLimits = {
-  free: { searches: 5, results: 5 },
-  basic: { searches: 100, results: 20 },
-  pro: { searches: 1000, results: 50 },
-  enterprise: { searches: 'Unlimited', results: 100 },
-};
 
 const quickStats = [
   {
@@ -56,10 +59,8 @@ export default function DashboardOverview({
   todaySearches, 
   recentSearches 
 }: DashboardOverviewProps) {
-  const limits = subscriptionLimits[subscriptionTier as keyof typeof subscriptionLimits];
-  const searchesRemaining = typeof limits.searches === 'number' 
-    ? Math.max(0, limits.searches - todaySearches)
-    : 'Unlimited';
+  const tier = getSubscriptionTier(subscriptionTier);
+  const searchesRemaining = getRemainingSearches(subscriptionTier, todaySearches);
 
   return (
     <div className="space-y-6">
@@ -88,18 +89,18 @@ export default function DashboardOverview({
             <div className="mt-2">
               <div className="flex items-center text-sm text-blue-600 dark:text-blue-400">
                 <span>
-                  {typeof limits.searches === 'number' 
-                    ? `${searchesRemaining} remaining of ${limits.searches}`
+                  {typeof tier.limits.searches === 'number' 
+                    ? `${searchesRemaining} remaining of ${tier.limits.searches}`
                     : 'Unlimited searches available'
                   }
                 </span>
               </div>
-              {typeof limits.searches === 'number' && (
+              {typeof tier.limits.searches === 'number' && (
                 <div className="mt-2">
                   <div className="bg-blue-200 dark:bg-blue-700 rounded-full h-2">
                     <div 
                       className="bg-blue-600 rounded-full h-2 transition-all"
-                      style={{ width: `${Math.min(100, (todaySearches / limits.searches) * 100)}%` }}
+                      style={{ width: `${Math.min(100, (todaySearches / tier.limits.searches) * 100)}%` }}
                     />
                   </div>
                 </div>
@@ -124,7 +125,7 @@ export default function DashboardOverview({
             </div>
             <div className="mt-2">
               <p className="text-sm text-green-600 dark:text-green-400">
-                {limits.results} results per search
+                {tier.limits.results} results per search
               </p>
               {subscriptionTier === 'free' && (
                 <Link 

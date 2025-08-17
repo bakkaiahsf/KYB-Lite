@@ -1,13 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Optimize for faster builds
+  // Enable strict type checking and linting for production safety
   typescript: {
-    // Skip type checking during build for faster deployment
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   eslint: {
-    // Skip ESLint during build for faster deployment  
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   // Experimental features for faster builds
   experimental: {
@@ -34,7 +32,7 @@ const nextConfig = {
         source: '/api/:path*',
         headers: [
           { key: 'Access-Control-Allow-Credentials', value: 'true' },
-          { key: 'Access-Control-Allow-Origin', value: '*' },
+          { key: 'Access-Control-Allow-Origin', value: process.env.NODE_ENV === 'production' ? 'https://kyb-lite-guevtq6ai-bakkaiahs-projects.vercel.app' : 'http://localhost:3000' },
           { key: 'Access-Control-Allow-Methods', value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT' },
           { key: 'Access-Control-Allow-Headers', value: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization' },
         ]
