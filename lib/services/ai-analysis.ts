@@ -1,9 +1,10 @@
+// @ts-ignore
 import OpenAI from 'openai';
 
 // Initialize OpenAI client
-const openai = new OpenAI({
+const openai = process.env.OPEN_API_KEY ? new OpenAI({
   apiKey: process.env.OPEN_API_KEY,
-});
+}) : null;
 
 export interface CompanyRiskAnalysis {
   overallRiskScore: number; // 1-10 scale
@@ -85,6 +86,11 @@ export class AIAnalysisService {
 
   async analyzeCompanyRisk(companyData: CompanyData): Promise<CompanyRiskAnalysis> {
     try {
+      if (!openai) {
+        console.warn('OpenAI client not initialized - using fallback analysis');
+        return this.getFallbackAnalysis(companyData);
+      }
+
       const prompt = this.buildAnalysisPrompt(companyData);
       
       const completion = await openai.chat.completions.create({
