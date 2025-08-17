@@ -1,30 +1,9 @@
-import { createClient } from '@/utils/supabase/server';
 import s from './Navbar.module.css';
 import Navlinks from './Navlinks';
 
-export default async function Navbar() {
-  let user = null;
-  
-  try {
-    // Only try to get user if Supabase is properly configured
-    if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-      try {
-        const supabase = createClient();
-        const { data } = await supabase.auth.getUser();
-        user = data.user;
-      } catch (supabaseError) {
-        // Specifically handle Supabase client creation errors
-        console.warn('Navbar: Supabase client error:', supabaseError instanceof Error ? supabaseError.message : 'Unknown supabase error');
-        user = null;
-      }
-    } else {
-      console.info('Navbar: Supabase environment variables not configured - running without authentication');
-    }
-  } catch (error) {
-    // Gracefully handle any other auth errors - continue without user
-    console.warn('Navbar: Authentication not available:', error instanceof Error ? error.message : 'Unknown error');
-    user = null;
-  }
+export default function Navbar() {
+  // No authentication - public access to all features
+  const user = null;
 
   return (
     <nav className={s.root}>

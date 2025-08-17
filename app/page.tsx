@@ -1,24 +1,17 @@
-import Pricing from '@/components/ui/Pricing/Pricing';
-import { createClient } from '@/utils/supabase/server';
-import {
-  getProducts,
-  getSubscription,
-  getUser
-} from '@/utils/supabase/queries';
+import { Metadata } from 'next';
+import Hero from '@/components/ui/Hero';
+import CompanySearch from '@/components/ui/CompanySearch';
 
-export default async function PricingPage() {
-  const supabase = createClient();
-  const [user, products, subscription] = await Promise.all([
-    getUser(supabase),
-    getProducts(supabase),
-    getSubscription(supabase)
-  ]);
+export const metadata: Metadata = {
+  title: 'KYB Lite - Company Analysis & Due Diligence',
+  description: 'Advanced company analysis powered by Companies House data and AI. Search companies, analyze ownership structures, and get insights for due diligence.',
+};
 
+export default function HomePage() {
   return (
-    <Pricing
-      user={user}
-      products={products ?? []}
-      subscription={subscription}
-    />
+    <div className="min-h-screen">
+      <Hero />
+      <CompanySearch />
+    </div>
   );
 }

@@ -1,18 +1,17 @@
 import { type NextRequest, NextResponse } from 'next/server';
 
 export async function middleware(request: NextRequest) {
-  // Only apply middleware to dashboard and account routes
-  // All other routes pass through without middleware
+  // No authentication required - all routes are public
+  // Pass through all requests without any middleware processing
   return NextResponse.next();
 }
 
 export const config = {
   matcher: [
     /*
-     * Match only specific paths that need middleware
-     * Exclude all public routes and static files
+     * No routes need middleware - everything is public
+     * This matcher will not match any routes
      */
-    '/dashboard/:path*',
-    '/account/:path*'
+    '/((?!.*).)*'
   ]
 };
