@@ -1,5 +1,4 @@
 {
-  "name": "nexus-ai-kyb-lite",
   "version": 2,
   "framework": "nextjs",
   "buildCommand": "npm run build",
@@ -9,17 +8,6 @@
     "app/api/**/*.ts": {
       "maxDuration": 30
     }
-  },
-  "env": {
-    "NEXT_PUBLIC_SUPABASE_URL": "@next_public_supabase_url",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@next_public_supabase_anon_key",
-    "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key",
-    "COMPANIES_HOUSE_API_KEY": "@companies_house_api_key",
-    "NEXTAUTH_SECRET": "@nextauth_secret",
-    "NEXTAUTH_URL": "@nextauth_url",
-    "STRIPE_PUBLIC_KEY": "@stripe_public_key",
-    "STRIPE_SECRET_KEY": "@stripe_secret_key",
-    "STRIPE_WEBHOOK_SECRET": "@stripe_webhook_secret"
   },
   "headers": [
     {
