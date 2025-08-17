@@ -1,49 +1,23 @@
 import { Suspense } from 'react';
 import SearchInterface from '@/components/search/SearchInterface';
-import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
 
 export const metadata = {
-  title: 'Company Search - Nexus AI',
+  title: 'Company Search - KYB Lite',
   description: 'Search UK companies and analyze ownership structures, officers, and risk factors',
 };
 
-export default async function SearchPage({
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
+export default function SearchPage({
   searchParams,
 }: {
   searchParams: { q?: string; page?: string };
 }) {
-  const supabase = createClient();
-  
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect('/signin');
-  }
-
-  // Get user subscription information
-  const { data: subscription } = await supabase
-    .from('subscriptions')
-    .select('*')
-    .eq('user_id', user.id)
-    .single();
-
-  const subscriptionTier = subscription?.status === 'active' 
-    ? subscription.price_id?.includes('pro') ? 'pro'
-    : subscription.price_id?.includes('enterprise') ? 'enterprise' 
-    : subscription.price_id?.includes('basic') ? 'basic'
-    : 'free'
-    : 'free';
-
-  // Calculate daily usage
-  const today = new Date().toISOString().split('T')[0];
-  const { count: todaySearches } = await supabase
-    .from('search_queries')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', user.id)
-    .gte('created_at', today);
+  // Mock data for public demo - no authentication required
+  const mockUser = null;
+  const subscriptionTier = 'demo';
+  const todaySearches = 0;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -61,9 +35,9 @@ export default async function SearchPage({
         {/* Search Interface */}
         <Suspense fallback={<SearchSkeleton />}>
           <SearchInterface
-            user={user}
+            user={mockUser}
             subscriptionTier={subscriptionTier}
-            todaySearches={todaySearches || 0}
+            todaySearches={todaySearches}
             initialQuery={searchParams.q}
             currentPage={parseInt(searchParams.page || '1')}
           />

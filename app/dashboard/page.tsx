@@ -2,6 +2,9 @@ import DashboardOverview from '@/components/dashboard/DashboardOverview';
 import QuickSearch from '@/components/search/QuickSearch';
 import AnalyticsOverview from '@/components/dashboard/AnalyticsOverview';
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
 export default function DashboardPage() {
   // Mock data for public demo - no authentication required
   const mockData = {

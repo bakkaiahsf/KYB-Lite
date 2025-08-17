@@ -1,10 +1,19 @@
-// @ts-ignore
-import OpenAI from 'openai';
+// OpenAI integration for risk analysis
+let openai: any = null;
 
-// Initialize OpenAI client
-const openai = process.env.OPEN_API_KEY ? new OpenAI({
-  apiKey: process.env.OPEN_API_KEY,
-}) : null;
+// Dynamic import to prevent build issues
+const initializeOpenAI = async () => {
+  if (typeof window === 'undefined' && process.env.OPEN_API_KEY) {
+    try {
+      const { default: OpenAI } = await import('openai');
+      openai = new OpenAI({
+        apiKey: process.env.OPEN_API_KEY,
+      });
+    } catch (error) {
+      console.warn('OpenAI not available:', error);
+    }
+  }
+};
 
 export interface CompanyRiskAnalysis {
   overallRiskScore: number; // 1-10 scale
@@ -86,8 +95,13 @@ export class AIAnalysisService {
 
   async analyzeCompanyRisk(companyData: CompanyData): Promise<CompanyRiskAnalysis> {
     try {
+      // Initialize OpenAI if not already done
       if (!openai) {
-        console.warn('OpenAI client not initialized - using fallback analysis');
+        await initializeOpenAI();
+      }
+      
+      if (!openai) {
+        console.warn('OpenAI client not available - using fallback analysis');
         return this.getFallbackAnalysis(companyData);
       }
 

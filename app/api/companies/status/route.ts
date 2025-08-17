@@ -11,6 +11,9 @@ import { createCompaniesHouseService } from '@/lib/services/companies-house';
 import { getUser, getSubscription } from '@/utils/supabase/queries';
 import type { Database } from '@/types_db';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 // ============================================================================
 // SUBSCRIPTION TIERS AND LIMITS
 // ============================================================================

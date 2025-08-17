@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { aiAnalysisService } from '@/lib/services/ai-analysis';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 const ParamsSchema = z.object({
   companyNumber: z.string().min(1, 'Company number is required'),
 });
