@@ -3,11 +3,19 @@ import s from './Navbar.module.css';
 import Navlinks from './Navlinks';
 
 export default async function Navbar() {
-  const supabase = createClient();
-
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
+  let user = null;
+  
+  try {
+    // Only try to get user if Supabase is properly configured
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+      user = data.user;
+    }
+  } catch (error) {
+    // Gracefully handle auth errors - continue without user
+    console.warn('Navbar: Authentication not available:', error instanceof Error ? error.message : 'Unknown error');
+  }
 
   return (
     <nav className={s.root}>
