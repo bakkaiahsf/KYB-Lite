@@ -72,7 +72,7 @@ async function getLocalCompany(supabase: any, companyNumber: string) {
   } catch (error) {
     const executionTime = Date.now() - startTime;
     console.error('Local company fetch error:', error);
-    return { company: null, executionTime, error: error.message };
+    return { company: null, executionTime, error: error instanceof Error ? error.message : 'Unknown error' };
   }
 }
 
